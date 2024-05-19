@@ -27,7 +27,7 @@ const getUsersHandler = (req, res) => {
   res.end();
 };
 
-// Route handler for GET /api/user/id
+// Route handler for GET /api/users/id
 const getUserByIdHandler = (req, res) => {
   const id = req.url.split("/")[3];
   const user = users.find((user) => user.id === parseInt(id));
@@ -38,6 +38,24 @@ const getUserByIdHandler = (req, res) => {
     res.write(JSON.stringify({ message: "User not found" }));
   }
   res.end();
+};
+
+// Route handler for POST /api/users
+const createUserHandler = (req, res) => {
+  let body = "";
+
+  req.on("data", (chunk) => {
+    body += chunk.toString(); // convert  chunk buffer to json
+  });
+
+  req.on("end", () => {
+    const newUser = JSON.parse(body); // convert json to regular object
+    users.push(newUser);
+
+    res.statusCode = 201;
+    res.write(JSON.stringify(newUser));
+    res.end();
+  });
 };
 
 // Not found handler
@@ -54,6 +72,8 @@ const server = createServer((req, res) => {
         getUsersHandler(req, res);
       } else if (req.url.match(/\/api\/users\/([0-9]+)/) && req.method === "GET") {
         getUserByIdHandler(req, res);
+      } else if (req.url === "/api/users" && req.method === "POST") {
+        createUserHandler(req, res);
       } else {
         notFoundHandler(req, res);
       }
