@@ -37,5 +37,5 @@ const server = http.createServer(async (req, res) => {
 });
 
 server.listen(PORT, () => {
-  console.log(`Server running on ${PORT}`);
+  console.log(`Server2 running on ${PORT}`);
 });
